@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خريطة طريق الـ AI والسايبر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fdfbf7;
+            color: #2d3436;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        .phase-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .phase-card.active {
+            border-color: #d4a373;
+            background-color: #fff;
+            box-shadow: 0 10px 15px -3px rgba(212, 163, 115, 0.1);
+        }
+
+        .step-indicator {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            transition: all 0.3s;
+        }
+
+        .active .step-indicator {
+            background-color: #d4a373;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .task-item:hover {
+            background-color: #fefae0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4a373;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black text-[#606c38] mb-4">خريطة طريق دمج الـ AI والسايبر</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto italic">
+                رحلتك من الأساسيات الأكاديمية إلى بناء أنظمة أمنية ذكية ومستقلة. هذه الخريطة مصممة لتواكب تطورك كرياضي وطالب مهندس.
+            </p>
+        </header>
+
+        <!-- Stats & Radar Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center">
+                <h3 class="text-xl font-bold mb-4 text-center">توازن المهارات المستهدف</h3>
+                <div class="chart-container">
+                    <canvas id="skillsRadar"></canvas>
+                </div>
+                <p class="mt-4 text-sm text-gray-500 text-center">هذا الرسم يوضح كيف تتكامل مهاراتك مع نهاية الخطة.</p>
+            </div>
+
+            <div class="lg:col-span-2 bg-[#fefae0] p-8 rounded-2xl border border-[#e9edc9] relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-2xl font-bold mb-6 text-[#283618]">لماذا هذا الدمج؟</h2>
+                    <p class="mb-4 leading-relaxed text-[#283618]">
+                        العالم اليوم لم يعد يكتفي بالأمن التقليدي. المهاجمون يستخدمون الذكاء الاصطناعي، والرد يجب أن يكون بنفس القوة. فهمك للـ <b>Logic</b> البرمجي من دراستك الجامعية هو الجسر الذي سيربط بين قوة تحليل البيانات في الـ AI وقوة حماية الأنظمة في السايبر.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-[#d4a373]">
+                            <div class="text-2xl mb-2">🛡️</div>
+                            <h4 class="font-bold">حماية ذكية</h4>
+                            <p class="text-xs text-gray-500">اكتشاف التهديدات قبل وقوعها.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-[#bc6c25]">
+                            <div class="text-2xl mb-2">⚡</div>
+                            <h4 class="font-bold">أتمتة متطورة</h4>
+                            <p class="text-xs text-gray-500">تقليل الجهد البشري في المراقبة.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-[#606c38]">
+                            <div class="text-2xl mb-2">🔍</div>
+                            <h4 class="font-bold">تحليل عميق</h4>
+                            <p class="text-xs text-gray-500">فهم أنماط الاختراق المعقدة.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+            <button onclick="switchPhase(1)" id="btn-1" class="phase-nav-btn px-6 py-3 rounded-full bg-white border-2 border-gray-200 font-bold hover:border-[#d4a373] transition shadow-sm active-btn">المرحلة 1: التأسيس</button>
+            <button onclick="switchPhase(2)" id="btn-2" class="phase-nav-btn px-6 py-3 rounded-full bg-white border-2 border-gray-200 font-bold hover:border-[#d4a373] transition shadow-sm">المرحلة 2: التخصص</button>
+            <button onclick="switchPhase(3)" id="btn-3" class="phase-nav-btn px-6 py-3 rounded-full bg-white border-2 border-gray-200 font-bold hover:border-[#d4a373] transition shadow-sm">المرحلة 3: الدمج</button>
+            <button onclick="switchPhase(4)" id="btn-4" class="phase-nav-btn px-6 py-3 rounded-full bg-white border-2 border-gray-200 font-bold hover:border-[#d4a373] transition shadow-sm">المرحلة 4: الاحتراف</button>
+        </div>
+
+        <!-- Phase Content Area -->
+        <div id="phase-content" class="bg-white p-6 md:p-10 rounded-3xl border border-gray-100 shadow-xl min-h-[500px]">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+
+        <!-- Footer / Tips Section -->
+        <div class="mt-12 p-8 bg-[#283618] text-[#fefae0] rounded-3xl flex flex-col md:flex-row items-center gap-8">
+            <div class="flex-1">
+                <h3 class="text-2xl font-bold mb-4">نصيحة "الروح الرياضية" 🥋</h3>
+                <p class="opacity-90">
+                    تماما كما في تدريبات الجودو، العبرة في "التكرار الصحيح". لا تحاول إنهاء المسارات بسرعة، بل حاول فهم كيف يتدفق الكود. إذا فهمت الـ Logic، سيسهل عليك تعلم أي أداة جديدة في المستقبل.
+                </p>
+            </div>
+            <div class="flex gap-4">
+                <div class="text-center">
+                    <div class="text-3xl font-black">100%</div>
+                    <div class="text-xs opacity-70">مجاني</div>
+                </div>
+                <div class="h-12 w-[1px] bg-white opacity-20"></div>
+                <div class="text-center">
+                    <div class="text-3xl font-black">∞</div>
+                    <div class="text-xs opacity-70">استمرارية</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const roadmapData = {
+            1: {
+                title: "المرحلة الأولى: بناء الأساسيات الصلبة",
+                duration: "شهور 1 - 3",
+                intro: "في هذه المرحلة، سنركز على تحويل جهازك إلى مختبر أمني وفهم كيف تتحدث الأنظمة مع بعضها البعض، مع تعزيز منطقك البرمجي.",
+                sections: [
+                    {
+                        category: "الأمن السيبراني (الأنظمة)",
+                        tasks: [
+                            { text: "فهم بروتوكولات الشبكة (OSI, TCP/IP) عبر TryHackMe", resource: "مسار Pre-Security" },
+                            { text: "إتقان التعامل مع Terminal في Linux", resource: "استخدم Ubuntu أو Kali" },
+                            { text: "أساسيات الويب (Requests & Responses)", resource: "فهم كيف يعمل المتصفح" }
+                        ]
+                    },
+                    {
+                        category: "الذكاء الاصطناعي (المنطق)",
+                        tasks: [
+                            { text: "التعمق في الجبر الخطي والاحتمالات الجامعية", resource: "ركز على التطبيق العملي" },
+                            { text: "إكمال مسار Scientific Computing على FreeCodeCamp", resource: "بناء المنطق البرمجي" },
+                            { text: "احتراف مكتبة Numpy و Pandas", resource: "أساس التعامل مع البيانات" }
+                        ]
+                    }
+                ]
+            },
+            2: {
+                title: "المرحلة الثانية: الدخول في صلب التخصص",
+                duration: "شهور 4 - 6",
+                intro: "الآن تبدأ المتعة! سنبدأ في تعلم كيفية اختراق الأنظمة (بشكل أخلاقي) وكيفية تدريب نماذج الذكاء الاصطناعي لتوقع النتائج.",
+                sections: [
+                    {
+                        category: "الأمن السيبراني (تطبيق العمليات)",
+                        tasks: [
+                            { text: "بدء مسار Jr Penetration Tester", resource: "منصة TryHackMe" },
+                            { text: "بناء أدوات بسيطة بـ Python (Port Scanner)", resource: "تطبيق برمجي ذاتي" },
+                            { text: "فحص الثغرات الأساسية واستغلالها في بيئة مخبرية", resource: "Labs" }
+                        ]
+                    },
+                    {
+                        category: "الذكاء الاصطناعي (تعلم الآلة)",
+                        tasks: [
+                            { text: "فهم خوارزميات التصنيف (Classification) والتوقع", resource: "Kaggle Intro to ML" },
+                            { text: "تنظيف البيانات الضخمة وتجهيزها (Data Cleaning)", resource: "Kaggle Intermediate" },
+                            { text: "بناء أول نموذج Machine Learning متكامل", resource: "Scikit-learn" }
+                        ]
+                    }
+                ]
+            },
+            3: {
+                title: "المرحلة الثالثة: نقطة الالتقاء والدمج",
+                duration: "شهور 7 - 9",
+                intro: "هذا هو قلب الخطة. سنستخدم ما تعلمته في الـ ML لتحليل بيانات الأمن السيبراني واكتشاف الهجمات بطريقة ذكية.",
+                sections: [
+                    {
+                        category: "تحليل البيانات الأمنية",
+                        tasks: [
+                            { text: "تحليل سجلات الشبكة (Network Logs) باستخدام Pandas", resource: "Datasets من Kaggle" },
+                            { text: "فهم سلوك البرمجيات الخبيثة من خلال البيانات", resource: "Malware Analysis" }
+                        ]
+                    },
+                    {
+                        category: "مشاريع الدمج التطبيقية",
+                        tasks: [
+                            { text: "مشروع: كاشف الشذوذ (Anomaly Detection) للشبكة", resource: "استخدام Isolation Forest" },
+                            { text: "مشروع: مصنف البريد الاحتيالي (Phishing Classifier)", resource: "استخدام NLP مبسط" }
+                        ]
+                    }
+                ]
+            },
+            4: {
+                title: "المرحلة الرابعة: الاحتراف والأتمتة",
+                duration: "مستمر",
+                intro: "الوصول إلى الاحتراف يعني جعل الأنظمة تعمل من أجلك. سنركز على الأتمتة المتقدمة واختيار مسار نهائي.",
+                sections: [
+                    {
+                        category: "الأتمتة والذكاء",
+                        tasks: [
+                            { text: "استخدام n8n لربط تنبيهات الأمن بموديلات الـ AI", resource: "Smart Automation" },
+                            { text: "استخدام Cursor AI لتسريع كتابة سكريبتات الحماية", resource: "Modern Dev Tools" }
+                        ]
+                    },
+                    {
+                        category: "التخصص النهائي",
+                        tasks: [
+                            { text: "اختيار مسار الدفاع الذكي (AI Blue Team)", resource: "بناء أنظمة دفاعية" },
+                            { text: "اختيار مسار الهجوم الذكي (AI Red Team)", resource: "تطوير أدوات اختراق ذكية" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        let currentPhase = 1;
+        let skillsChart;
+
+        function initChart() {
+            const ctx = document.getElementById('skillsRadar').getContext('2d');
+            skillsChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['البرمجة (Python)', 'الشبكات', 'الرياضيات', 'تعلم الآلة', 'أنظمة Linux', 'أمن الويب'],
+                    datasets: [{
+                        label: 'المستوى المستهدف',
+                        data: [90, 80, 85, 75, 80, 70],
+                        fill: true,
+                        backgroundColor: 'rgba(212, 163, 115, 0.2)',
+                        borderColor: '#d4a373',
+                        pointBackgroundColor: '#bc6c25',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#bc6c25'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function switchPhase(phaseNum) {
+            currentPhase = phaseNum;
+            const data = roadmapData[phaseNum];
+            const contentDiv = document.getElementById('phase-content');
+            
+            // Update buttons
+            document.querySelectorAll('.phase-nav-btn').forEach(btn => {
+                btn.classList.remove('bg-[#d4a373]', 'text-white', 'border-[#d4a373]');
+                btn.classList.add('bg-white', 'text-[#2d3436]', 'border-gray-200');
+            });
+            document.getElementById(`btn-${phaseNum}`).classList.add('bg-[#d4a373]', 'text-white', 'border-[#d4a373]');
+            document.getElementById(`btn-${phaseNum}`).classList.remove('bg-white');
+
+            // Render Content
+            let sectionsHtml = '';
+            data.sections.forEach(sec => {
+                let tasksHtml = '';
+                sec.tasks.forEach(t => {
+                    tasksHtml += `
+                        <div class="task-item flex items-start gap-3 p-3 rounded-lg transition border-b border-gray-50 last:border-0">
+                            <input type="checkbox" class="mt-1 w-5 h-5 accent-[#d4a373]">
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800">${t.text}</p>
+                                <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded inline-block mt-1">المصدر: ${t.resource}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                sectionsHtml += `
+                    <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                        <h4 class="text-lg font-bold text-[#606c38] mb-4 flex items-center gap-2">
+                            <span class="w-2 h-6 bg-[#d4a373] rounded-full"></span>
+                            ${sec.category}
+                        </h4>
+                        <div class="space-y-2">
+                            ${tasksHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            contentDiv.innerHTML = `
+                <div class="animate-fadeIn">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                        <div>
+                            <span class="text-[#bc6c25] font-bold text-sm uppercase tracking-widest">${data.duration}</span>
+                            <h2 class="text-3xl font-black text-[#283618] mt-1">${data.title}</h2>
+                        </div>
+                        <div class="bg-[#fefae0] px-4 py-2 rounded-full border border-[#e9edc9] text-sm font-bold text-[#606c38]">
+                            المرحلة ${phaseNum} من 4
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-8 leading-relaxed text-lg italic border-r-4 border-gray-200 pr-4">
+                        "${data.intro}"
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        ${sectionsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initial setup
+        window.onload = () => {
+            initChart();
+            switchPhase(1);
+        };
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</body>
+</html>
